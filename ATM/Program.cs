@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace ATM
 {
@@ -35,23 +35,22 @@ namespace ATM
 
             int option = -1;
 
-            while (option != 4)
+            while (option != 2)
             {
 
-                Menu();
+                LoginMenu();
                 Console.WriteLine("Enter option > ");
                 option = Convert.ToInt32(Console.ReadLine());
 
                 if (option == 1)
                 {
-                    viewBalance();
+                    Program accountLog = getLogin(accounts);
+                    
+                    if (accountLog != null)
+                    {
+                        savingProcess(accountLog);
+                    }
                 } else if (option == 2)
-                {
-                    deposit();
-                } else if (option == 3)
-                {
-                    withdraw();
-                } else if (option == 4)
                 {
                     Console.WriteLine("Closing ATM.....");
                 } else
@@ -60,78 +59,100 @@ namespace ATM
                 }
             }
 
+            static void LoginMenu()
+            {
+                Console.WriteLine("======================================");
+                Console.WriteLine("ATM Machine");
+                Console.WriteLine("======================================");
+                Console.WriteLine("1. Log In");
+                Console.WriteLine("2. Quit");
+            }
+
             static void Menu()
             {
                 Console.WriteLine("======================================");
                 Console.WriteLine("ATM Machine");
                 Console.WriteLine("======================================");
-                Console.WriteLine("1. View Balance");
-                Console.WriteLine("2. Deposit Into Account");
-                Console.WriteLine("3. Withdraw From Account");
-                Console.WriteLine("4. Quit");
+                Console.WriteLine("1. ViewBalance");
+                Console.WriteLine("2. Deposit");
+                Console.WriteLine("3. Withdraw");
+                Console.WriteLine("4. Log out");
             }
 
-            void viewBalance()
+            static void viewBalance(Program i)
             {
-                Boolean isTrue = false;
-                Console.WriteLine("Enter account ID > ");
-                string? accID = Console.ReadLine();
-                for (int i = 0; i < accounts.Length; i++)
+                Console.WriteLine("Name: " +  i.name);
+                Console.WriteLine("Age: " + i.age);
+                Console.WriteLine("Balance: " + i.balance);
+            }
+
+            void deposit(Program i)
+            {
+                Console.WriteLine("Enter amount to deposit > ");
+                Double deposit = Convert.ToDouble(Console.ReadLine());
+                i.balance = i.balance + deposit;
+                Console.WriteLine("\nNew Balance: " + i.balance);
+            }
+
+            void withdraw(Program i)
+            {
+                Console.WriteLine("Enter amount to withdraw >");
+                Double withdraw = Convert.ToDouble(Console.ReadLine());
+                i.balance = i.balance - withdraw;
+                Console.WriteLine(withdraw + " have been withdrawn.");
+                Console.WriteLine("Remaining balance: " + i.balance);
+            }
+            
+            static Program getLogin(Program[] accounts)
+            {
+                Program logging = null;
+
+                while (logging == null)
                 {
-                    if (accID.Equals(accounts[i].accountID))
-                    {
-                        Console.WriteLine("Name: " + accounts[i].name);
-                        Console.WriteLine("Age: " + accounts[i].age);
-                        Console.WriteLine("Balance " + accounts[i].balance);
-                        isTrue = true;
+                    Console.WriteLine("Enter account ID > ");
+                    string accID = Console.ReadLine();
+                    foreach (Program i in accounts) {
+                        if (i.accountID.Equals(accID) == true) {
+                            logging = i;
+                            Console.WriteLine("Login successfully!");
+                        }
                     }
                 }
-                if (isTrue == false)
+
+                if (logging == null)
                 {
-                    Console.WriteLine("Invalid accountID");
-                }           
+                    Console.WriteLine("Incorrect account ID");
+                }
+
+                return logging;
             }
 
-            void deposit()
+            void savingProcess(Program accountLog)
             {
-                Console.WriteLine("Enter account ID > ");
+                int choose = -1;
 
-                String accDepo = Console.ReadLine();
-
-                for (int i = 0; i < accounts.Length; i++)
+                while (choose != 4)
                 {
-                    if (accDepo.Equals(accounts[i].accountID))
-                    {
-                        Console.WriteLine("Enter amount to deposit > ");
-                        Double deposit = Convert.ToDouble(Console.ReadLine());
-                        accounts[i].balance = accounts[i].balance + deposit;
+                    Menu();
+                    Console.WriteLine("Enter option > ");
+                    choose = Convert.ToInt32(Console.ReadLine());
 
-                        Console.WriteLine("\nNew Balance: " + accounts[i].balance);
+                    if (choose == 1)
+                    {
+                        viewBalance(accountLog);
+                    } else if (choose == 2)
+                    {
+                        deposit(accountLog);
+                    } else if (choose == 3)
+                    {
+                        withdraw(accountLog);
+                    } else if (choose == 4)
+                    {
+                        Console.WriteLine("Logging out...");
                     }
                 }
             }
-
-            void withdraw()
-            {
-                Console.WriteLine("Enter account ID > ");
-
-                String accWith = Console.ReadLine();
-
-                for (int i = 0; i < accounts.Length; i++)
-                {
-                    if (accWith.Equals(accounts[i].accountID))
-                    {
-                        Console.WriteLine("Enter amount to withdraw >");
-                        Double withdraw = Convert.ToDouble(Console.ReadLine());
-                        accounts[i].balance = accounts[i].balance - withdraw;
-
-                        Console.WriteLine(withdraw + " have been withdrawn.");
-                        Console.WriteLine("Remaining balance: " + accounts[i].balance);
-                    }
-                }
-            }
-
-
         }
     }
 }
+
